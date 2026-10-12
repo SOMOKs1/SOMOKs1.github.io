@@ -278,13 +278,20 @@
       var tab = el("button", "sc-tab");
       tab.type = "button";
       tab.setAttribute("aria-label", (w.title || "Untitled"));
+      // 各作品のサムネイルは一覧に並べたまま、選ばれたものがひとつ上に持ち上がって大きく映る
+      var th = el("span", "sc-th");
+      var mm = w.media || {};
+      if (mm.type === "youtube" && mm.id) th.style.backgroundImage = "url(https://i.ytimg.com/vi/" + encodeURIComponent(mm.id) + "/mqdefault.jpg)";
+      else if (w.thumb) th.style.backgroundImage = 'url("' + String(w.thumb).replace(/"/g, "%22") + '")';
+      else { th.classList.add("is-empty"); th.textContent = (mm.type === "soundcloud" && mm.url) ? "♪" : "…"; }
+      var bar = el("span", "sc-bar");
+      bar.appendChild(document.createElement("i"));
+      th.appendChild(bar);
+      tab.appendChild(th);
       var label = el("span", "sc-label");
       label.appendChild(el("span", "sc-num", (i < 9 ? "0" : "") + (i + 1)));
       label.appendChild(el("span", "sc-name", w.title || "Untitled"));
       tab.appendChild(label);
-      var bar = el("span", "sc-bar");
-      bar.appendChild(document.createElement("i"));
-      tab.appendChild(bar);
       tab.addEventListener("click", function () { go(i); });
       nav.appendChild(tab);
       tabs.push(tab);
@@ -317,7 +324,7 @@
 
     // 自動で次へ: 進行バーのアニメーションが終わったら切り替える(止めると一緒に止まる)
     nav.addEventListener("animationend", function (e) {
-      if (e.target && e.target.parentNode && e.target.parentNode.parentNode && e.target.parentNode.parentNode.classList.contains("is-active")) go(idx + 1);
+      if (e.target && e.target.closest && e.target.closest(".sc-tab.is-active")) go(idx + 1);
     });
 
     // 一時停止: マウスを乗せている間 / キー操作中 / 画面外 / 詳細表示中 / タブが裏にあるとき

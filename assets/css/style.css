@@ -368,7 +368,7 @@ html.modal-open { overflow: hidden; }
 
 
 /* ---------- 作品ショーケース(大きなサムネイルが順番に切り替わる) ---------- */
-.showcase { --sc-w: min(100%, calc((100svh - 380px) * 16 / 9)); --sc-ms: 6000ms; display: block; }
+.showcase { --sc-w: min(100%, calc((100svh - 470px) * 16 / 9)); --sc-ms: 6000ms; display: block; }
 .showcase-stage { position: relative; isolation: isolate; width: max(var(--sc-w), min(100%, 360px)); aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #050505; }
 .showcase .slide {
   position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: scale(1.04);
@@ -404,19 +404,30 @@ html.modal-open { overflow: hidden; }
 .sc-arrow:hover { background: var(--accent); color: var(--bg); }
 @media (hover: none) { .sc-arrow { opacity: 0.85; } }
 
-.showcase-nav { display: flex; gap: 14px; width: max(var(--sc-w), min(100%, 360px)); margin-top: 18px; }
-.sc-tab { flex: 1 1 0; min-width: 0; padding: 4px 0; background: none; border: 0; text-align: left; color: var(--muted); cursor: pointer; font: inherit; }
-.sc-label { display: flex; gap: 8px; margin-bottom: 8px; font-size: 0.74rem; white-space: nowrap; }
+.showcase-nav { display: flex; gap: 14px; width: max(var(--sc-w), min(100%, 560px)); margin-top: 26px; padding-top: 12px; }
+.sc-tab { flex: 1 1 0; min-width: 0; padding: 0; background: none; border: 0; text-align: left; color: var(--muted); cursor: pointer; font: inherit; }
+.sc-th {
+  position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden;
+  background: #050505 center / cover no-repeat; opacity: 0.5; outline: 1px solid transparent; outline-offset: 0;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s, outline-color 0.3s, box-shadow 0.5s;
+}
+.sc-th.is-empty { display: grid; place-items: center; color: var(--muted); font-size: 0.9rem; }
+.sc-tab:hover .sc-th { opacity: 0.85; }
+.sc-tab.is-active .sc-th { opacity: 1; transform: translateY(-12px); outline-color: var(--accent); box-shadow: 0 14px 26px rgba(0, 0, 0, 0.55); }
+.sc-label { display: flex; gap: 8px; margin-top: 8px; font-size: 0.74rem; white-space: nowrap; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.sc-tab.is-active .sc-label { transform: translateY(-4px); }
 .sc-num { flex: none; font-family: var(--font-display); font-weight: 700; color: var(--accent); }
 .sc-name { overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
 .sc-tab:hover .sc-name, .sc-tab.is-active .sc-name { color: var(--text); }
-.sc-bar { display: block; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+.sc-bar { position: absolute; left: 0; right: 0; bottom: 0; display: block; height: 3px; background: rgba(0, 0, 0, 0.45); }
 .sc-bar i { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
 .sc-tab.is-active .sc-bar i { animation: sc-fill var(--sc-ms) linear forwards; }
 .showcase.is-paused .sc-tab.is-active .sc-bar i { animation-play-state: paused; }
 @keyframes sc-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (max-width: 640px) {
   .sc-name { display: none; }
+  .showcase-nav { gap: 8px; }
+  .sc-th { border-radius: 6px; }
   .showcase .caption { padding-top: 48px; }
   .showcase .caption .card-desc, .showcase .caption .card-meta { display: none; }
   .sc-arrow { width: 38px; height: 38px; margin-top: -19px; }
