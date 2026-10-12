@@ -160,17 +160,114 @@
         "....###.....",
         "...##.##...."
       ]]
+    },
+    dragon: {
+      frames: [[
+        "............#.#.",
+        "...........#####",
+        "..o.......#w####",
+        ".ooo..#######.#.",
+        "oooo.#########..",
+        ".o..###########.",
+        "...#############",
+        "....########.##.",
+        "....##.##....#..",
+        "....##.##.......",
+        "...###.###......"
+      ], [
+        "............#.#.",
+        "...........#####",
+        "..........#w####",
+        "..o...#######.#.",
+        ".ooo.#########..",
+        "oooo###########.",
+        "...#############",
+        "....########.##.",
+        ".....###.###.#..",
+        "....##...##.....",
+        "....#.....#....."
+      ]]
+    },
+    skeleton: {
+      frames: [[
+        "....####....",
+        "...######...",
+        "...#o##o#...",
+        "...######...",
+        "....#oo#....",
+        "...#.##.#...",
+        "..##.##.##..",
+        "...#.##.#...",
+        "....#..#....",
+        "....#..#....",
+        "...##..##..."
+      ], [
+        "....####....",
+        "...######...",
+        "...#o##o#...",
+        "...######...",
+        "....#oo#....",
+        "...#.##.#...",
+        "..##.##.##..",
+        "...#.##.#...",
+        "....#..#....",
+        "...#....#...",
+        "..##....##.."
+      ]]
+    },
+    bat: {
+      frames: [[
+        "#....##....#",
+        "##..####..##",
+        "############",
+        ".#..#oo#..#.",
+        "....####...."
+      ], [
+        "....####....",
+        "..#.#oo#.#..",
+        ".##.####.##.",
+        "##...##...##",
+        "#....##....#"
+      ]]
+    },
+    mushroom: {
+      frames: [[
+        "....####....",
+        "..########..",
+        ".##o####o##.",
+        "############",
+        "....####....",
+        "....#ww#....",
+        "....####....",
+        "....#..#....",
+        "...##..##..."
+      ], [
+        "....####....",
+        "..########..",
+        ".##o####o##.",
+        "############",
+        "....####....",
+        "....#ww#....",
+        "....####....",
+        "...#....#...",
+        "...#....#..."
+      ]]
     }
   };
 
   // dir: 1 = 右へ / -1 = 左へ, speed: 1秒あたりの px, gap: 間隔(列の中のずれ)
   var WALKERS = [
-    { s: "knight", dir: 1,  speed: 34, off: 0,   beat: 240 },
-    { s: "mage",   dir: 1,  speed: 34, off: -86, beat: 260 },
-    { s: "knight", dir: 1,  speed: 34, off: -172, beat: 250 },
-    { s: "slime",  dir: -1, speed: 22, off: 140, beat: 420 },
-    { s: "goblin", dir: -1, speed: 28, off: 520, beat: 230 },
-    { s: "slime",  dir: -1, speed: 24, off: 900, beat: 380 }
+    { s: "knight",   dir: 1,  speed: 34, off: 0,    beat: 240 },
+    { s: "mage",     dir: 1,  speed: 34, off: -86,  beat: 260 },
+    { s: "knight",   dir: 1,  speed: 34, off: -172, beat: 250 },
+    { s: "bat",      dir: 1,  speed: 58, off: 640,  beat: 160, lift: 46 },
+    { s: "slime",    dir: -1, speed: 22, off: 140,  beat: 420 },
+    { s: "skeleton", dir: -1, speed: 30, off: 330,  beat: 260 },
+    { s: "goblin",   dir: -1, speed: 28, off: 520,  beat: 230 },
+    { s: "mushroom", dir: -1, speed: 24, off: 760,  beat: 340 },
+    { s: "slime",    dir: -1, speed: 24, off: 900,  beat: 380 },
+    { s: "dragon",   dir: -1, speed: 20, off: 1180, beat: 300 },
+    { s: "bat",      dir: -1, speed: 46, off: 1450, beat: 180, lift: 62 }
   ];
 
   var SPRITE_COL = { "#": "rgb(" + CONFIG.line + ")", "o": "rgba(" + CONFIG.line + ", 0.5)", "w": "rgb(242, 240, 235)" };
@@ -193,7 +290,9 @@
     var run = reduceMotion ? 0 : t * 0.001 * c.speed;
     var u = ((run + c.off) % span + span) % span - 150;
     var x = c.dir > 0 ? u : w - u;
-    return { x: x, y: lineY(x, t) };
+    var y = lineY(x, t);
+    if (c.lift) y -= c.lift + (reduceMotion ? 0 : 9 * Math.sin(t / 520 + k));   // コウモリは波の上を浮かんで飛ぶ
+    return { x: x, y: y };
   }
 
   function launch(now) {
@@ -253,9 +352,9 @@
 
       var pos = walkerPos(k, t), x2 = pos.x, y2 = pos.y;
       var slope = Math.atan2(lineY(x2 + 8, t) - lineY(x2 - 8, t), 16);
-      slope = Math.max(-0.3, Math.min(0.3, slope * 0.6));
+      slope = c.lift ? 0 : Math.max(-0.3, Math.min(0.3, slope * 0.6));
       var idx = reduceMotion ? 0 : (Math.floor(t / c.beat) + k) % 2;
-      var hop = reduceMotion ? 0 : Math.abs(Math.sin(t / c.beat * Math.PI)) * 2.5;
+      var hop = (reduceMotion || c.lift) ? 0 : Math.abs(Math.sin(t / c.beat * Math.PI)) * 2.5;
       ctx.globalAlpha = 0.95 * lineFade * Math.min(1, Math.max(0, (t - resetT) / 700));
       if (ctx.globalAlpha <= 0.01) continue;
       ctx.save();
