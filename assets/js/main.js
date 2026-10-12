@@ -334,31 +334,33 @@
     row.hidden = false;
   }
 
-  /* ---------- 受賞歴 ---------- */
+  /* ---------- 受賞歴(About の使用ツールの下に小さく) ---------- */
+  var EXT_ICON = '<svg class="ext-icon" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true" focusable="false"><path d="M4.5 2H2.5A1 1 0 0 0 1.5 3v6.5a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1V7.5M7 1.5h3.5V5M10.5 1.5 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function renderAwards() {
     var site = window.SITE || {};
     var list = document.getElementById("award-list");
-    var section = document.getElementById("awards-section");
-    if (!list || !section) return;
+    var row = document.getElementById("awards-row");
+    if (!list || !row) return;
     var items = (site.awards || []).filter(function (a) { return a && a.title; });
-    if (!items.length) { section.hidden = true; return; }
+    if (!items.length) { row.hidden = true; return; }
     items.forEach(function (a) {
       var li = el("li", "award");
-      if (a.year) { li.classList.add("has-year"); li.appendChild(el("span", "award-year", a.year)); }
-      var body = el("div", "award-body");
-      var t = el("p", "award-title");
+      var t = el("span", "award-title");
+      t.appendChild(document.createTextNode(a.title));
       if (a.url) {
-        var link = el("a", "", a.title);
+        // 文字にリンクを張る代わりに、小さな「外部リンク」アイコンを添える
+        var link = el("a", "ext-link");
         link.href = a.url; link.target = "_blank"; link.rel = "noopener";
+        link.setAttribute("aria-label", a.title + " (外部サイト)");
+        link.innerHTML = EXT_ICON;
+        t.appendChild(document.createTextNode(" "));
         t.appendChild(link);
-      } else {
-        t.textContent = a.title;
       }
-      body.appendChild(t);
-      if (a.detail) body.appendChild(el("p", "award-detail", a.detail));
-      li.appendChild(body);
+      li.appendChild(t);
+      if (a.detail) li.appendChild(el("span", "award-detail", a.detail));
       list.appendChild(li);
     });
+    row.hidden = false;
   }
 
   function init() {

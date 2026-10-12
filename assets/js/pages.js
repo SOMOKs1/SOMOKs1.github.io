@@ -205,7 +205,6 @@
       if (sec.classList.contains("hero")) {
         tag(q(".eyebrow"), "pg", 0);
         tag(q("h1"), "pg-wipe", 1);
-        tag(q(".hero-actions"), "pg", 3);
         return;
       }
       tag(q(".section-title"), "pg-wipe", 0);
@@ -213,7 +212,6 @@
       tag(q(".about-text > p:not(.about-lead)"), "pg", 3);
       tag(q(".timeline li"), "pg", 5);
       tag(q(".facts"), "pg", 3);
-      tag(q(".award"), "pg", 2);
       tag(q(".card"), "pg", 2);
       tag(q(".contact-lead"), "pg", 2);
       tag(q(".contact-mail"), "pg-wipe", 3);

@@ -127,19 +127,13 @@ main, .site-footer { position: relative; z-index: 1; }
 .tl-year { font-family: var(--font-display); font-weight: 700; color: var(--accent); font-size: 0.9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tl-text { color: var(--body); font-size: 0.92rem; }
 
-/* ---------- Awards ---------- */
-.award-list { list-style: none; border-top: 1px solid var(--line); }
-.award { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line); }
-.award.has-year { grid-template-columns: 5.5em 1fr; }
-.award-year { font-family: var(--font-display); font-weight: 700; color: var(--accent); font-size: 0.95rem; }
-.award-title { font-size: 1.12rem; font-weight: 700; line-height: 1.6; }
-.award-title a { color: inherit; text-decoration: underline; text-decoration-color: rgba(236, 208, 111, 0.5); text-underline-offset: 5px; }
-.award-title a:hover { color: var(--accent); }
-.award-detail { color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
-@media (max-width: 720px) {
-  .award, .award.has-year { grid-template-columns: 1fr; gap: 2px; padding: 18px 0; }
-  .award-title { font-size: 1rem; }
-}
+/* ---------- Awards (About の中に小さく) ---------- */
+.award-mini { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.award-mini .award { display: flex; flex-direction: column; gap: 1px; }
+.award-mini .award-title { font-size: 0.8rem; font-weight: 500; line-height: 1.55; color: var(--text); }
+.award-mini .award-detail { font-size: 0.74rem; color: var(--muted); line-height: 1.5; }
+.ext-link { display: inline-flex; vertical-align: -1px; margin-left: 2px; padding: 2px 3px; color: var(--accent); border-radius: 4px; transition: background 0.2s, color 0.2s; }
+.ext-link:hover, .ext-link:focus-visible { background: rgba(236, 208, 111, 0.16); }
 
 /* ---------- Works ---------- */
 .filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
@@ -361,17 +355,6 @@ html.modal-open { overflow: hidden; }
 }
 .has-pages .in-view .timeline::after { transform: scaleY(1); transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1) 0.15s; }
 /* Awards: 各行の下を金色の線がさっと走る */
-.award { position: relative; }
-.award::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--accent);
-  transform: scaleX(0); transform-origin: left; opacity: 0; pointer-events: none;
-}
-.has-pages .in-view .award::after { animation: award-sweep 1s cubic-bezier(0.77, 0, 0.18, 1) both; animation-delay: calc(var(--i, 0) * 80ms + 120ms); }
-@keyframes award-sweep {
-  0% { transform: scaleX(0); opacity: 1; }
-  65% { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(1); opacity: 0; }
-}
 /* Works: サムネイルが下から上へ幕を開けるように現れる */
 .has-pages .thumb-frame { clip-path: inset(100% 0 0 0 round 14px); }
 .has-pages .in-view .thumb-frame {
