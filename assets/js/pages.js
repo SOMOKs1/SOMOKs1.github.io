@@ -43,7 +43,10 @@
     b.className = "pager-dot";
     var name = nameOf(sec, i);
     b.setAttribute("aria-label", name);
-    b.title = name.charAt(0).toUpperCase() + name.slice(1);
+    var label = document.createElement("span");
+    label.className = "pager-label";
+    label.textContent = name === "top" ? "Home" : name;   // 点の横に、どのページかを小さく表示
+    b.appendChild(label);
     b.addEventListener("click", function () {
       var a = sec.previousElementSibling;
       var target = (a && a.classList.contains("anchor")) ? a : sec;
