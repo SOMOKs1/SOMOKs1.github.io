@@ -164,12 +164,12 @@ main, .site-footer { position: relative; z-index: 1; }
 
 /* 先頭の作品は大きく見せる */
 @media (min-width: 900px) {
-  .grid > .card:first-child { grid-column: 1 / -1; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0 clamp(28px, 4vw, 52px); align-items: center; }
-  .grid > .card:first-child .card-body { display: flex; flex-direction: column; justify-content: center; padding: 0; }
-  .grid > .card:first-child .thumb-frame { height: 100%; }
-  .grid > .card:first-child .card-title { font-size: 1.5rem; }
-  .grid > .card:first-child .card-desc { font-size: 0.95rem; -webkit-line-clamp: 4; }
-  .grid > .card:first-child .media { height: 100%; aspect-ratio: auto; min-height: 260px; }
+  .grid:not(.is-archive) > .card:first-child { grid-column: 1 / -1; display: grid; grid-template-columns: 1.55fr 1fr; gap: 0 clamp(28px, 4vw, 52px); align-items: center; }
+  .grid:not(.is-archive) > .card:first-child .card-body { display: flex; flex-direction: column; justify-content: center; padding: 0; }
+  .grid:not(.is-archive) > .card:first-child .thumb-frame { height: 100%; }
+  .grid:not(.is-archive) > .card:first-child .card-title { font-size: 1.5rem; }
+  .grid:not(.is-archive) > .card:first-child .card-desc { font-size: 0.95rem; -webkit-line-clamp: 4; }
+  .grid:not(.is-archive) > .card:first-child .media { height: 100%; aspect-ratio: auto; min-height: 260px; }
 }
 
 .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin-top: 14px; }
@@ -368,8 +368,8 @@ html.modal-open { overflow: hidden; }
 
 
 /* ---------- 作品ショーケース(大きなサムネイルが順番に切り替わる) ---------- */
-.showcase { --sc-w: min(100%, calc((100svh - 470px) * 16 / 9)); --sc-ms: 6000ms; display: block; }
-.showcase-stage { position: relative; isolation: isolate; width: max(var(--sc-w), min(100%, 360px)); aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #050505; }
+.showcase { --sc-w: min(100%, calc((100svh - 410px) * 16 / 9)); --sc-ms: 6000ms; display: block; }
+.showcase-stage { margin-inline: auto; position: relative; isolation: isolate; width: max(var(--sc-w), min(100%, 360px)); aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #050505; }
 .showcase .slide {
   position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: scale(1.04);
   transition: opacity 0.7s ease, transform 1.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.7s;
@@ -404,7 +404,7 @@ html.modal-open { overflow: hidden; }
 .sc-arrow:hover { background: var(--accent); color: var(--bg); }
 @media (hover: none) { .sc-arrow { opacity: 0.85; } }
 
-.showcase-nav { display: flex; gap: 14px; width: max(var(--sc-w), min(100%, 560px)); margin-top: 26px; padding-top: 12px; }
+.showcase-nav { margin-inline: auto; display: flex; gap: 14px; width: max(var(--sc-w), min(100%, 560px)); margin-top: 26px; padding-top: 12px; }
 .sc-tab { flex: 1 1 0; min-width: 0; padding: 0; background: none; border: 0; text-align: left; color: var(--muted); cursor: pointer; font: inherit; }
 .sc-th {
   position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden;
@@ -435,4 +435,30 @@ html.modal-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .showcase .slide, .showcase .caption > * { transition: none; }
   .sc-tab.is-active .sc-bar i { animation: none; transform: scaleX(1); }
+}
+
+
+/* ---------- 「全作品を見る」リンク / 全作品ページ ---------- */
+.section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: clamp(32px, 5vw, 52px); }
+.section-head .section-title { margin-bottom: 0; }
+.all-link { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; transition: color 0.2s; }
+.all-link:hover { color: var(--accent); text-decoration: none; }
+.all-link span { display: inline-block; transition: transform 0.25s; }
+.all-link:hover span { transform: translateX(4px); }
+.archive { justify-content: flex-start; }
+.back-link { display: inline-block; margin-bottom: 20px; font-size: 0.82rem; color: var(--muted); }
+.back-link:hover { color: var(--accent); text-decoration: none; }
+
+/* ノートPC(高さの低い画面)では、1ページに収まるよう余白を詰める */
+@media (max-height: 940px) and (min-width: 900px) {
+  .section { padding-top: 52px; padding-bottom: 34px; }
+  .section-title, .section-head { margin-bottom: 22px; }
+  .section-head .section-title { margin-bottom: 0; }
+  .about { gap: 36px; }
+  .facts div { padding: 9px 0; }
+  .timeline { margin-top: 18px; }
+  .timeline li { padding-top: 3px; padding-bottom: 3px; }
+  .about-text p { line-height: 1.75; }
+  .about-lead { margin-bottom: 10px; }
+  .showcase-nav { margin-top: 20px; }
 }

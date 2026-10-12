@@ -376,8 +376,10 @@
     if (!grid) return;
 
     // draft の空き枠は、確認用に日本語ページだけ表示(英語ページには出ません)
+    // 全作品ページ(works/)では全部、トップでは more: true の作品(一覧ページ専用)を除いて表示
+    var ARCHIVE = document.body && document.body.getAttribute("data-page") === "works";
     var works = (window.WORKS || [])
-      .filter(function (w) { return w && (!w.draft || (window.SHOW_DRAFTS && !IS_EN)); })
+      .filter(function (w) { return w && (!w.draft || (window.SHOW_DRAFTS && !IS_EN)) && (ARCHIVE || !w.more); })
       .map(localize);
     // 英語ページだけ: en: { order: 1 } を書いた作品を先頭に(数字が小さい順)。ほかは元の順のまま
     if (IS_EN) {
@@ -391,7 +393,7 @@
       return;
     }
 
-    if (window.WORKS_LAYOUT !== "grid" && works.length > 1) { renderShowcase(grid, works); return; }
+    if (!ARCHIVE && window.WORKS_LAYOUT !== "grid" && works.length > 1) { renderShowcase(grid, works); return; }
 
     function draw(tag) {
       grid.textContent = "";
@@ -407,7 +409,7 @@
       });
     });
 
-    if (filterBox && works.length > 6 && allTags.length > 1) {
+    if (filterBox && (ARCHIVE || works.length > 6) && allTags.length > 1) {
       var buttons = [];
       [T.all].concat(allTags).forEach(function (label, i) {
         var b = el("button", "chip" + (i === 0 ? " is-active" : ""), label);
