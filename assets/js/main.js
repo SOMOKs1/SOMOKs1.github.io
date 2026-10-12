@@ -55,7 +55,12 @@
     box.setAttribute("aria-hidden", "true");
     if (m.type === "youtube" && m.id) {
       box.classList.add("media-video");
-      box.style.backgroundImage = "url(https://i.ytimg.com/vi/" + encodeURIComponent(m.id) + "/hqdefault.jpg)";
+      var yt = "https://i.ytimg.com/vi/" + encodeURIComponent(m.id) + "/";
+      box.style.backgroundImage = "url(" + yt + "hqdefault.jpg)";
+      // 高解像度(1280x720)のサムネイルがあれば差し替える。ない動画は 120x90 の代替画像が返るので、サイズで見分ける
+      var hi = new Image();
+      hi.onload = function () { if (hi.naturalWidth > 320) box.style.backgroundImage = "url(" + yt + "maxresdefault.jpg)"; };
+      hi.src = yt + "maxresdefault.jpg";
       box.appendChild(el("span", "play"));
     } else if (work.thumb) {
       // 動画がない作品用: 画像(スクリーンショットなど)をサムネイルにする
