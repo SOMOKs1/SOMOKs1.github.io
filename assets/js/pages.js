@@ -129,6 +129,11 @@
       var m = metrics(), y = m.y, last = sections.length - 1, i = 0;
       for (var k = 0; k <= last; k++) if (m.list[k].T <= y + 2) i = k;
       var P = m.list[i];
+      if (i === last) {  // 最後のページ(Contact)は自動で動かさない。フッターまで普通にスクロールするだけ
+        if (dy < 0 && y > P.T + 1) return (y + dy > P.T) ? null : P.T;
+        if (dy < 0) return i > 0 ? m.list[i - 1].E : null;
+        return null;
+      }
       if (dy > 0) {
         if (y >= P.E - 1) return i < last ? m.list[i + 1].T : null;
         return (y + dy < P.E) ? null : P.E;
