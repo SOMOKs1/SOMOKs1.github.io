@@ -458,3 +458,31 @@ html.modal-open { overflow: hidden; }
   .about-lead { margin-bottom: 10px; }
   .showcase-nav { margin-top: 20px; }
 }
+
+
+/* ---------- 受賞などの小さな印 ---------- */
+.badge {
+  display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: 0.66rem; letter-spacing: 0.06em;
+  line-height: 1; color: var(--bg); background: var(--accent); border-radius: 999px; padding: 4px 9px 3px;
+}
+.badge-on { position: absolute; z-index: 2; top: 10px; left: 10px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45); }
+.card-meta .badge { align-self: center; }
+
+/* ---------- 全作品ページ: サムネイル・タイトル・年だけの小さなカード ---------- */
+.grid.is-archive { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 30px 22px; }
+.mini { position: relative; }
+.mini .thumb-frame { border-radius: 10px; }
+.mini .play { width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+.mini .play::before { margin: -6px 0 0 -4px; border-width: 6px 0 6px 10px; }
+.mini:hover .media-thumb, .mini:focus-within .media-thumb { scale: 1.06; }
+.mini:hover .play, .mini:focus-within .play { background: var(--accent); transform: scale(1.08); }
+.mini:hover .play::before, .mini:focus-within .play::before { border-left-color: var(--bg); }
+.mini-body { padding: 12px 2px 0; }
+.mini-title { font-size: 0.98rem; font-weight: 700; line-height: 1.45; }
+.mini:hover .title-btn, .mini:focus-within .title-btn { color: var(--accent); }
+.mini-meta { margin-top: 2px; font-family: var(--font-display); font-weight: 700; font-size: 0.74rem; color: var(--accent); }
+.media-empty.media-thumb { font-size: 0.78rem; }
+@media (max-width: 640px) {
+  .grid.is-archive { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+  .mini-title { font-size: 0.88rem; }
+}

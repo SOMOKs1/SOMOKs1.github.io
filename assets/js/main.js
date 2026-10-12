@@ -29,10 +29,11 @@
   }
 
   function metaNode(work) {
-    if (!work.category && !work.year) return null;
+    if (!work.category && !work.year && !work.badge) return null;
     var p = el("p", "card-meta");
     if (work.year) p.appendChild(el("span", "year", work.year));
     if (work.category) p.appendChild(el("span", "category", work.category));
+    if (work.badge) p.appendChild(el("span", "badge", work.badge));   // 受賞・入賞などの小さな印
     return p;
   }
 
@@ -187,8 +188,6 @@
     if (work.tools && work.tools.length) addFact(T.tools, tagList(work.tools));
     if (facts.childNodes.length) body.appendChild(facts);
 
-    if (work.tags && work.tags.length) body.appendChild(tagList(work.tags));
-
     var links = visibleLinks(work);
     if (links.length) {
       var row = el("p", "modal-links");
@@ -237,7 +236,6 @@
     body.appendChild(h);
 
     if (work.description) body.appendChild(el("p", "card-desc", work.description));
-    if (work.tags && work.tags.length) body.appendChild(tagList(work.tags));
 
     var more = el("button", "more", T.more);
     more.type = "button";
@@ -246,6 +244,26 @@
     more.addEventListener("click", open);
     body.appendChild(more);
 
+    card.appendChild(body);
+    return card;
+  }
+
+  /* ---------- 全作品ページ用の小さなカード ---------- */
+  function buildMini(work) {
+    function open() { openModal(work); }
+    var card = el("article", "mini");
+    var frame = el("div", "thumb-frame");
+    frame.appendChild(buildThumb(work, open));
+    if (work.badge) frame.appendChild(el("span", "badge badge-on", work.badge));
+    card.appendChild(frame);
+    var body = el("div", "mini-body");
+    var h = el("h3", "mini-title");
+    var tb = el("button", "title-btn", work.title || "Untitled");
+    tb.type = "button";
+    tb.addEventListener("click", open);
+    h.appendChild(tb);
+    body.appendChild(h);
+    if (work.year) body.appendChild(el("p", "mini-meta", work.year));
     card.appendChild(body);
     return card;
   }
@@ -369,10 +387,9 @@
     syncPause();
   }
 
-  /* ---------- 作品一覧(作品が7件以上でタグ絞り込みが自動で出ます) ---------- */
+  /* ---------- 作品一覧 ---------- */
   function renderWorks() {
     var grid = document.getElementById("works-grid");
-    var filterBox = document.getElementById("works-filter");
     if (!grid) return;
 
     // draft の空き枠は、確認用に日本語ページだけ表示(英語ページには出ません)
@@ -395,36 +412,8 @@
 
     if (!ARCHIVE && window.WORKS_LAYOUT !== "grid" && works.length > 1) { renderShowcase(grid, works); return; }
 
-    function draw(tag) {
-      grid.textContent = "";
-      works
-        .filter(function (w) { return !tag || (w.tags || []).indexOf(tag) !== -1; })
-        .forEach(function (w) { grid.appendChild(buildCard(w)); });
-    }
-
-    var allTags = [];
-    works.forEach(function (w) {
-      (w.tags || []).forEach(function (t) {
-        if (allTags.indexOf(t) === -1) allTags.push(t);
-      });
-    });
-
-    if (filterBox && (ARCHIVE || works.length > 6) && allTags.length > 1) {
-      var buttons = [];
-      [T.all].concat(allTags).forEach(function (label, i) {
-        var b = el("button", "chip" + (i === 0 ? " is-active" : ""), label);
-        b.type = "button";
-        b.addEventListener("click", function () {
-          buttons.forEach(function (x) { x.classList.remove("is-active"); });
-          b.classList.add("is-active");
-          draw(i === 0 ? "" : label);
-        });
-        buttons.push(b);
-        filterBox.appendChild(b);
-      });
-    }
-
-    draw("");
+    // 全作品ページ: サムネイル・タイトル・年だけの小さなカード(説明は押すと開く詳細に入っています)
+    works.forEach(function (w) { grid.appendChild(ARCHIVE ? buildMini(w) : buildCard(w)); });
   }
 
   /* ---------- 連絡先 ---------- */
