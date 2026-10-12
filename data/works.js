@@ -21,6 +21,11 @@
  */
 window.SHOW_DRAFTS = true; // ← デザイン確認中は true。人に見せる前に false にすると空き枠が隠れます
 
+/*
+ * WORKS_LAYOUT : 作品の見せ方。"showcase" = 大きなサムネイルが順番に切り替わる / "grid" = 一覧(カード)表示
+ */
+window.WORKS_LAYOUT = "showcase";
+
 window.WORKS = [
   /* ---- 1〜2 : 受賞・入賞作(最初に見てもらう枠) ---- */
   {

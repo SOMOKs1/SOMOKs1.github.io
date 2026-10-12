@@ -245,6 +245,118 @@
     return card;
   }
 
+  /* ---------- ショーケース: 大きなサムネイルが順番に切り替わる ---------- */
+  function renderShowcase(box, works) {
+    box.className = "showcase";
+    box.setAttribute("role", "region");
+    box.setAttribute("aria-roledescription", "carousel");
+    box.textContent = "";
+
+    var stage = el("div", "showcase-stage");
+    var nav = el("div", "showcase-nav");
+    var slides = [], tabs = [], idx = 0;
+
+    works.forEach(function (w, i) {
+      function open() { openModal(w); }
+      var slide = el("div", "slide");
+      slide.appendChild(buildThumb(w, open));
+
+      var cap = el("div", "caption");
+      var m = metaNode(w);
+      if (m) cap.appendChild(m);
+      var h = el("h3", "card-title");
+      var tb = el("button", "title-btn", w.title || "Untitled");
+      tb.type = "button";
+      tb.addEventListener("click", open);
+      h.appendChild(tb);
+      cap.appendChild(h);
+      if (w.description) cap.appendChild(el("p", "card-desc", w.description));
+      slide.appendChild(cap);
+      stage.appendChild(slide);
+      slides.push(slide);
+
+      var tab = el("button", "sc-tab");
+      tab.type = "button";
+      tab.setAttribute("aria-label", (w.title || "Untitled"));
+      var label = el("span", "sc-label");
+      label.appendChild(el("span", "sc-num", (i < 9 ? "0" : "") + (i + 1)));
+      label.appendChild(el("span", "sc-name", w.title || "Untitled"));
+      tab.appendChild(label);
+      var bar = el("span", "sc-bar");
+      bar.appendChild(document.createElement("i"));
+      tab.appendChild(bar);
+      tab.addEventListener("click", function () { go(i); });
+      nav.appendChild(tab);
+      tabs.push(tab);
+    });
+
+    function arrow(cls, text, label, step) {
+      var b = el("button", "sc-arrow " + cls, text);
+      b.type = "button";
+      b.setAttribute("aria-label", label);
+      b.addEventListener("click", function () { go(idx + step); });
+      return b;
+    }
+    stage.appendChild(arrow("sc-prev", "‹", IS_EN ? "Previous work" : "前の作品", -1));
+    stage.appendChild(arrow("sc-next", "›", IS_EN ? "Next work" : "次の作品", 1));
+
+    function go(n) {
+      idx = (n + works.length) % works.length;
+      slides.forEach(function (s, i) {
+        var on = i === idx;
+        s.classList.toggle("is-active", on);
+        s.inert = !on;
+        if (on) s.removeAttribute("aria-hidden"); else s.setAttribute("aria-hidden", "true");
+      });
+      tabs.forEach(function (t, i) {
+        t.classList.remove("is-active");
+        if (i === idx) { void t.offsetWidth; t.classList.add("is-active"); t.setAttribute("aria-current", "true"); }
+        else t.removeAttribute("aria-current");
+      });
+    }
+
+    // 自動で次へ: 進行バーのアニメーションが終わったら切り替える(止めると一緒に止まる)
+    nav.addEventListener("animationend", function (e) {
+      if (e.target && e.target.parentNode && e.target.parentNode.parentNode && e.target.parentNode.parentNode.classList.contains("is-active")) go(idx + 1);
+    });
+
+    // 一時停止: マウスを乗せている間 / キー操作中 / 画面外 / 詳細表示中 / タブが裏にあるとき
+    var hover = false, focus = false, visible = true;
+    function syncPause() {
+      var modal = document.documentElement.classList.contains("modal-open");
+      box.classList.toggle("is-paused", hover || focus || !visible || modal || document.hidden);
+    }
+    box.addEventListener("mouseenter", function () { hover = true; syncPause(); });
+    box.addEventListener("mouseleave", function () { hover = false; syncPause(); });
+    box.addEventListener("focusin", function () { focus = true; syncPause(); });
+    box.addEventListener("focusout", function () { focus = false; syncPause(); });
+    document.addEventListener("visibilitychange", syncPause);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; syncPause(); }, { threshold: 0.35 }).observe(box);
+    }
+    if ("MutationObserver" in window) {
+      new MutationObserver(syncPause).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    }
+
+    // 左右キーと、スマホのスワイプ
+    box.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { go(idx - 1); e.preventDefault(); }
+      else if (e.key === "ArrowRight") { go(idx + 1); e.preventDefault(); }
+    });
+    var sx = null;
+    stage.addEventListener("pointerdown", function (e) { if (e.pointerType === "touch") sx = e.clientX; });
+    stage.addEventListener("pointerup", function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx; sx = null;
+      if (Math.abs(dx) > 48) go(idx + (dx < 0 ? 1 : -1));
+    });
+
+    box.appendChild(stage);
+    box.appendChild(nav);
+    go(0);
+    syncPause();
+  }
+
   /* ---------- 作品一覧(作品が7件以上でタグ絞り込みが自動で出ます) ---------- */
   function renderWorks() {
     var grid = document.getElementById("works-grid");
@@ -266,6 +378,8 @@
       grid.appendChild(el("p", "empty", T.empty));
       return;
     }
+
+    if (window.WORKS_LAYOUT !== "grid" && works.length > 1) { renderShowcase(grid, works); return; }
 
     function draw(tag) {
       grid.textContent = "";

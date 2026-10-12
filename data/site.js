@@ -11,7 +11,8 @@ window.SITE = {
   awards: [
     { title: "カプコン サウンドインターンシップ コンテスト SFX部門 優秀賞", detail: "PRAGMATA サウンドリデザイン" },
     { title: "バンダイナムコスタジオ サウンドMAチャレンジコンテスト 入賞", detail: "テイルズ オブ アライズ カットシーンの効果音制作・MA" },
-    { title: "Berlin International Sound Design Competition 2026 (BIFSC) ファイナリスト", detail: "", url: "https://www.bifsc.org/sound-design-competition" }
+    { title: "Berlin International Sound Design Competition 2026 (BIFSC) ファイナリスト", detail: "", url: "https://www.bifsc.org/sound-design-competition" },
+    { title: "学内コンテスト 入賞", detail: "" }
   ],
   links: [
     { label: "YouTube", url: "" },

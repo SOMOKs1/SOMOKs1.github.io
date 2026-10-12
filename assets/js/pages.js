@@ -213,6 +213,8 @@
       tag(q(".timeline li"), "pg", 5);
       tag(q(".facts"), "pg", 3);
       tag(q(".card"), "pg", 2);
+      tag(q(".showcase-stage"), "pg", 2);
+      tag(q(".showcase-nav"), "pg", 4);
       tag(q(".contact-lead"), "pg", 2);
       tag(q(".contact-mail"), "pg-wipe", 3);
       tag(q(".link-list"), "pg", 5);

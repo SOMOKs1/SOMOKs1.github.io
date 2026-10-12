@@ -120,10 +120,12 @@ main, .site-footer { position: relative; z-index: 1; }
 .tool-list li { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; }
 
 /* ---------- 経歴(About) ---------- */
-.timeline { list-style: none; margin-top: 28px; border-left: 1px solid var(--line); padding-left: 0; }
-.timeline li { position: relative; display: grid; grid-template-columns: 6.6em 1fr; gap: 12px; padding: 7px 0 7px 22px; }
-.timeline li::before { content: ""; position: absolute; left: -4px; top: calc(7px + 0.72em); width: 7px; height: 7px; margin-top: -4px; border-radius: 50%; background: var(--bg); border: 1px solid var(--muted); }
-.timeline li::before { background: var(--accent) !important; border-color: var(--accent) !important; }
+.timeline { list-style: none; margin-top: 28px; padding-left: 0; }
+.timeline li { position: relative; z-index: 1; display: grid; grid-template-columns: 6.6em 1fr; gap: 12px; padding: 7px 0 7px 22px; }
+/* 点の中心(--dot)を縦線のまん中にそろえ、線は点から次の点までだけを結ぶ */
+.timeline { --dot: calc(7px + 0.72em); }
+.timeline li::before { content: ""; position: absolute; left: -3px; top: var(--dot); width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: var(--accent); z-index: 1; }
+.timeline li:not(:last-child)::after { content: ""; position: absolute; left: 0; width: 1px; top: var(--dot); bottom: calc(-1 * var(--dot)); background: var(--line); transform-origin: top; z-index: 0; }
 .tl-year { font-family: var(--font-display); font-weight: 700; color: var(--accent); font-size: 0.9rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tl-text { color: var(--body); font-size: 0.92rem; }
 
@@ -348,12 +350,8 @@ html.modal-open { overflow: hidden; }
 /* ページごとの見せ場 */
 /* Hero: 見出しが左から一気に現れる(上の .pg-wipe) */
 /* About: 経歴の縦線が上から伸びる */
-.has-pages .timeline { border-left-color: transparent; position: relative; }
-.has-pages .timeline::after {
-  content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 1px; background: var(--line);
-  transform: scaleY(0); transform-origin: top;
-}
-.has-pages .in-view .timeline::after { transform: scaleY(1); transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1) 0.15s; }
+.has-pages .timeline li:not(:last-child)::after { transform: scaleY(0); }
+.has-pages .in-view .timeline li:not(:last-child)::after { transform: scaleY(1); transition: transform 0.45s cubic-bezier(0.77, 0, 0.18, 1); transition-delay: calc(var(--i, 0) * 70ms + 150ms); }
 /* Awards: 各行の下を金色の線がさっと走る */
 /* Works: サムネイルが下から上へ幕を開けるように現れる */
 .has-pages .thumb-frame { clip-path: inset(100% 0 0 0 round 14px); }
@@ -367,3 +365,63 @@ html.modal-open { overflow: hidden; }
 .has-pages .in-view .ghost { opacity: 1; transform: none; transition: opacity 0.9s ease 0.05s, transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.05s; }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-snap-type: none; } }
+
+
+/* ---------- 作品ショーケース(大きなサムネイルが順番に切り替わる) ---------- */
+.showcase { --sc-w: min(100%, calc((100svh - 380px) * 16 / 9)); --sc-ms: 6000ms; display: block; }
+.showcase-stage { position: relative; isolation: isolate; width: max(var(--sc-w), min(100%, 360px)); aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #050505; }
+.showcase .slide {
+  position: absolute; inset: 0; opacity: 0; visibility: hidden; transform: scale(1.04);
+  transition: opacity 0.7s ease, transform 1.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.7s;
+}
+.showcase .slide.is-active { opacity: 1; visibility: visible; transform: none; z-index: 1; transition-delay: 0s; }
+.showcase .slide .media { height: 100%; aspect-ratio: auto; }
+.showcase .caption {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; pointer-events: none;
+  padding: 72px clamp(18px, 3vw, 34px) clamp(18px, 2.6vw, 30px);
+  background: linear-gradient(to top, rgba(5, 5, 5, 0.9), rgba(5, 5, 5, 0.6) 55%, transparent);
+}
+.showcase .caption .title-btn, .showcase .caption a { pointer-events: auto; }
+.showcase .caption .card-title { font-size: clamp(1.2rem, 2.3vw, 1.75rem); }
+.showcase .caption .card-desc { max-width: 44em; -webkit-line-clamp: 2; color: #c9c7c1; }
+.showcase .caption > * { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+.showcase .slide.is-active .caption > * { opacity: 1; transform: none; transition-delay: calc(0.25s + var(--k, 0) * 70ms); }
+.showcase .caption > :nth-child(2) { --k: 1; }
+.showcase .caption > :nth-child(3) { --k: 2; }
+.showcase .slide .play { z-index: 1; }
+.showcase .slide:hover .media-thumb { scale: 1.03; }
+.showcase .slide:hover .play { background: var(--accent); transform: scale(1.08); }
+.showcase .slide:hover .play::before { border-left-color: var(--bg); }
+
+.sc-arrow {
+  position: absolute; z-index: 3; top: 50%; width: 44px; height: 44px; margin-top: -22px; padding: 0 0 3px; border-radius: 50%;
+  background: rgba(10, 10, 10, 0.62); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--text);
+  font-size: 1.5rem; line-height: 1; cursor: pointer; opacity: 0; transition: opacity 0.25s, background 0.2s, color 0.2s;
+}
+.sc-prev { left: 14px; }
+.sc-next { right: 14px; }
+.showcase-stage:hover .sc-arrow, .showcase-stage:focus-within .sc-arrow { opacity: 1; }
+.sc-arrow:hover { background: var(--accent); color: var(--bg); }
+@media (hover: none) { .sc-arrow { opacity: 0.85; } }
+
+.showcase-nav { display: flex; gap: 14px; width: max(var(--sc-w), min(100%, 360px)); margin-top: 18px; }
+.sc-tab { flex: 1 1 0; min-width: 0; padding: 4px 0; background: none; border: 0; text-align: left; color: var(--muted); cursor: pointer; font: inherit; }
+.sc-label { display: flex; gap: 8px; margin-bottom: 8px; font-size: 0.74rem; white-space: nowrap; }
+.sc-num { flex: none; font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+.sc-name { overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
+.sc-tab:hover .sc-name, .sc-tab.is-active .sc-name { color: var(--text); }
+.sc-bar { display: block; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+.sc-bar i { display: block; height: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+.sc-tab.is-active .sc-bar i { animation: sc-fill var(--sc-ms) linear forwards; }
+.showcase.is-paused .sc-tab.is-active .sc-bar i { animation-play-state: paused; }
+@keyframes sc-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (max-width: 640px) {
+  .sc-name { display: none; }
+  .showcase .caption { padding-top: 48px; }
+  .showcase .caption .card-desc, .showcase .caption .card-meta { display: none; }
+  .sc-arrow { width: 38px; height: 38px; margin-top: -19px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase .slide, .showcase .caption > * { transition: none; }
+  .sc-tab.is-active .sc-bar i { animation: none; transform: scaleX(1); }
+}
