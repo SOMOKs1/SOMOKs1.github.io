@@ -130,16 +130,19 @@
       for (var k = 0; k <= last; k++) if (m.list[k].T <= y + 2) i = k;
       var P = m.list[i];
       if (i === last) {  // 最後のページ(Contact)は自動で動かさない。フッターまで普通にスクロールするだけ
-        if (dy < 0 && y > P.T + 1) return (y + dy > P.T) ? null : P.T;
-        if (dy < 0) return i > 0 ? m.list[i - 1].E : null;
+        if (dy < 0) {
+          if (y > P.T + 1 && y + dy > P.T) return null;      // Contact の中は普通に戻る
+          return i > 0 ? m.list[i - 1].E : null;             // 先頭を越えるなら、止まらず前のページの終わりへ
+        }
         return null;
       }
+      var slack = Math.round(m.vh * 0.14);   // 端まであとわずかなら、1回で次のページへ(中途半端に止まらない)
       if (dy > 0) {
-        if (y >= P.E - 1) return i < last ? m.list[i + 1].T : null;
-        return (y + dy < P.E) ? null : P.E;
+        if (y >= P.E - slack) return m.list[i + 1].T;
+        return null;
       }
       if (y > P.E + 1) return P.E;
-      if (y > P.T + 1) return (y + dy > P.T) ? null : P.T;
+      if (y > P.T + slack) return null;
       return i > 0 ? m.list[i - 1].E : null;
     }
 
