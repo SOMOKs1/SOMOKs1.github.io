@@ -182,42 +182,103 @@
     return a + (b - a) * k;
   }
 
-  function drawWalkers(t) {
+  /* ---------- Aboutへ移るとき: キャラが上へ弾き飛ばされて、下へ落ちていく ---------- */
+  var state = "walk";       // walk = 歩いている / fly = 飛び散り中 / gone = 落ちて消えた
+  var flyT0 = 0, resetT = -9999, flyers = [];
+  var GRAVITY = 1900;
+
+  function walkerPos(k, t) {
+    var c = WALKERS[k];
+    var span = w + 300;
+    var run = reduceMotion ? 0 : t * 0.001 * c.speed;
+    var u = ((run + c.off) % span + span) % span - 150;
+    var x = c.dir > 0 ? u : w - u;
+    return { x: x, y: lineY(x, t) };
+  }
+
+  function launch(now) {
+    state = "fly"; flyT0 = now; flyers = [];
+    for (var k = 0; k < WALKERS.length; k++) {
+      var p = walkerPos(k, now);
+      if (p.x < -20 || p.x > w + 20) { flyers.push(null); continue; }   // 画面外のキャラはそのまま
+      var side = (p.x - w / 2) / (w / 2);                                  // 端にいるほど外向きに飛ぶ
+      flyers.push({
+        x: p.x, y: p.y,
+        vx: side * 140 + (Math.random() - 0.5) * 220,
+        vy: -(640 + Math.random() * 280),
+        vr: (Math.random() < 0.5 ? -1 : 1) * (4 + Math.random() * 5),
+        delay: Math.random() * 90
+      });
+    }
+  }
+
+  function drawSprite(sp, k, c, px, frameIdx) {
+    var frame = sp.frames[frameIdx];
+    var rows = frame.length, cols = frame[0].length;
+    for (var r = 0; r < rows; r++) {
+      var line = frame[r];
+      for (var q = 0; q < line.length; q++) {
+        var ch = line.charAt(q);
+        if (ch === ".") continue;
+        ctx.fillStyle = SPRITE_COL[ch];
+        ctx.fillRect(Math.round((q - cols / 2) * px), Math.round((r - rows) * px), px + 0.6, px + 0.6);
+      }
+    }
+  }
+
+  function drawWalkers(t, lineFade) {
     var px = w < 720 ? 3 : 4;               // ドット1つの大きさ
-    var span = w + 300;                      // 画面外から入って画面外へ出る
-    ctx.globalAlpha = 0.95;
+    var anyFlying = false;
     for (var k = 0; k < WALKERS.length; k++) {
       var c = WALKERS[k], sp = SPRITES[c.s];
-      var run = reduceMotion ? 0 : t * 0.001 * c.speed;
-      var u = ((run + c.off) % span + span) % span - 150;
-      var x = c.dir > 0 ? u : w - u;
-      var y = lineY(x, t);
-      var slope = Math.atan2(lineY(x + 8, t) - lineY(x - 8, t), 16);
+
+      if (state === "fly") {
+        var f = flyers[k];
+        if (!f) continue;
+        var dt = Math.max(0, (t - flyT0 - f.delay) / 1000);
+        var x = f.x + f.vx * dt, y = f.y + f.vy * dt + 0.5 * GRAVITY * dt * dt;
+        if (y > h + 140) continue;
+        anyFlying = true;
+        ctx.globalAlpha = 0.95;
+        ctx.save();
+        ctx.translate(x, y - 14);
+        ctx.rotate(f.vr * dt);
+        if (c.dir < 0) ctx.scale(-1, 1);
+        ctx.translate(0, 14);
+        drawSprite(sp, k, c, px, 1);
+        ctx.restore();
+        continue;
+      }
+      if (state === "gone") continue;
+
+      var pos = walkerPos(k, t), x2 = pos.x, y2 = pos.y;
+      var slope = Math.atan2(lineY(x2 + 8, t) - lineY(x2 - 8, t), 16);
       slope = Math.max(-0.3, Math.min(0.3, slope * 0.6));
-      var frame = sp.frames[reduceMotion ? 0 : (Math.floor(t / c.beat) + k) % 2];
+      var idx = reduceMotion ? 0 : (Math.floor(t / c.beat) + k) % 2;
       var hop = reduceMotion ? 0 : Math.abs(Math.sin(t / c.beat * Math.PI)) * 2.5;
-      var rows = frame.length, cols = frame[0].length;
+      ctx.globalAlpha = 0.95 * lineFade * Math.min(1, Math.max(0, (t - resetT) / 700));
+      if (ctx.globalAlpha <= 0.01) continue;
       ctx.save();
-      ctx.translate(x, y - hop + 1);
+      ctx.translate(x2, y2 - hop + 1);
       ctx.rotate(slope);
       if (c.dir < 0) ctx.scale(-1, 1);
-      for (var r = 0; r < rows; r++) {
-        var line = frame[r];
-        for (var q = 0; q < line.length; q++) {
-          var ch = line.charAt(q);
-          if (ch === ".") continue;
-          ctx.fillStyle = SPRITE_COL[ch];
-          ctx.fillRect(Math.round((q - cols / 2) * px), Math.round((r - rows) * px), px + 0.6, px + 0.6);
-        }
-      }
+      drawSprite(sp, k, c, px, idx);
       ctx.restore();
     }
     ctx.globalAlpha = 1;
+    if (state === "fly" && !anyFlying) state = "gone";
+    return anyFlying;
+  }
+
+  function lineFadeNow() {
+    var o = 1 - window.scrollY / (h * 0.8);
+    return o < 0 ? 0 : o > 1 ? 1 : o;
   }
 
   function draw(t) {
     ctx.clearRect(0, 0, w, h);
-    ctx.globalAlpha = CONFIG.opacity;
+    var lf = lineFadeNow();
+    ctx.globalAlpha = CONFIG.opacity * lf;
 
     ctx.strokeStyle = "rgba(242, 240, 235, 0.08)";
     ctx.lineWidth = 1;
@@ -234,23 +295,31 @@
     path(t, false);
 
     ctx.globalAlpha = 1;
-    drawWalkers(t);
+    drawWalkers(t, lf);
   }
 
-  // ヒーローが下のセクションに完全に隠れたら描画を止めて省電力
-  function heroVisible() {
-    return window.scrollY < h;
+  // ヒーローが下のセクションに完全に隠れたら描画を止めて省電力(キャラが飛んでいる間は続ける)
+  function active() {
+    return window.scrollY < h || state === "fly";
   }
 
-  // ヒーローから離れるにつれて、波形をすっと消していく(セクションに背景がないため)
-  function fade() {
-    var o = 1 - window.scrollY / (h * 0.8);
-    canvas.style.opacity = o < 0 ? 0 : o > 1 ? 1 : o.toFixed(3);
+  var lastY = 0;
+  function onScroll() {
+    var y = window.scrollY;
+    if (!reduceMotion) {
+      // ヒーローから下へ動き出した瞬間に、キャラを弾き飛ばす
+      if (state === "walk" && y > 6 && y > lastY && y < h * 0.6) launch(performance.now());
+      // ヒーローに戻ってきたら、歩く列がまた現れる
+      if (y < 4 && state !== "walk") { state = "walk"; flyers = []; resetT = performance.now(); }
+    }
+    lastY = y;
+    if (reduceMotion) draw(0);
   }
 
   function frame(now) {
     raf = 0;
-    if (document.hidden || !heroVisible()) return;
+    if (document.hidden) return;
+    if (!active()) { ctx.clearRect(0, 0, w, h); return; }
     draw(now);
     raf = requestAnimationFrame(frame);
   }
@@ -261,7 +330,7 @@
   }
 
   document.addEventListener("visibilitychange", kick);
-  window.addEventListener("scroll", function () { fade(); kick(); }, { passive: true });
+  window.addEventListener("scroll", function () { onScroll(); kick(); }, { passive: true });
 
   var resizeTimer = 0;
   window.addEventListener("resize", function () {
