@@ -14,7 +14,7 @@
   var CONFIG = {
     points: 220,           // 波形の細かさ
     line: "236, 208, 111", // 波形の色 (R, G, B)
-    opacity: 0.62,         // 濃さ(0〜1)
+    opacity: 0.5,          // 濃さ(0〜1)
     speed: 1               // 流れる速さ(0 で止まる)
   };
 
@@ -42,58 +42,182 @@
            0.05 * Math.sin(i * 0.19 - t * 0.002);
   }
 
-  // 一定間隔で「ヒット音」が鳴ったように、波紋が左右に広がって消えていく
-  var pulses = [], nextPulse = 0;
-  function updatePulses(t) {
-    if (t >= nextPulse) {
-      pulses.push({ x: 0.15 + Math.random() * 0.7, t0: t });
-      nextPulse = t + 2400 + Math.random() * 2400;
-    }
-    pulses = pulses.filter(function (p) { return t - p.t0 < 4500; });
-  }
-  function pulseAt(u) {
-    var v = 0;
-    for (var k = 0; k < pulses.length; k++) {
-      var p = pulses[k], age = (pulseT - p.t0) / 1000, d = Math.abs(u - p.x), r = age * 0.17;
-      var e = Math.exp(-Math.pow((d - r) / 0.055, 2)) * Math.exp(-age * 0.65);
-      v += 0.42 * e * Math.sin(d * 75 - age * 16);
-    }
-    return v;
-  }
-  var pulseT = 0;
-
-  function taperAt(i) { return Math.pow(Math.sin(Math.PI * i / (N - 1)), 0.7); }
-
-  // layer: 主線 / 奥の2本(位相をずらして、少し小さく)
-  var LAYERS = [
-    { off: 0,     gain: 1,    alpha: 1,    width: 2   },
-    { off: 5200,  gain: 0.72, alpha: 0.28, width: 1.2 },
-    { off: -7400, gain: 0.5,  alpha: 0.16, width: 1   }
-  ];
-
-  function valueAt(i, t, L) {
-    var u = i / (N - 1);
-    return (shape(i, t + L.off) * L.gain + pulseAt(u) * (L.gain === 1 ? 1 : 0.45)) * taperAt(i);
+  function pointAt(i, t, mirror) {
+    var taper = Math.pow(Math.sin(Math.PI * i / (N - 1)), 0.7);
+    var d = shape(i, t) * taper;
+    return { x: (i / (N - 1)) * w, y: base - (mirror ? -d : d) * amp };
   }
 
-  function path(t, L, mirror) {
+  function path(t, mirror) {
     ctx.beginPath();
     for (var i = 0; i < N; i++) {
-      var d = valueAt(i, t, L);
-      var x = (i / (N - 1)) * w, y = base - (mirror ? -d : d) * amp;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      var p = pointAt(i, t, mirror);
+      if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
     }
     ctx.stroke();
   }
 
-  var BARS = 110;
+
+  /* ---------- 波の上を歩くキャラクターたち(オリジナルのドット絵) ----------
+   * # = 金色 / o = 暗い金色 / w = 白(目・ハイライト)。各キャラは2コマで足踏みします。
+   * 行を足したり文字を変えたりして、キャラを描き換えられます(幅は12文字)。
+   */
+  var SPRITES = {
+    knight: {
+      frames: [[
+        "......#.....",
+        ".....###....",
+        "....#####...",
+        "....#oww#...",
+        "....#####...",
+        "..o.#####.#.",
+        ".ooo#####.#.",
+        "..o.#####.#.",
+        "....#####...",
+        "....##.##...",
+        "....##.##...",
+        "...###.###.."
+      ], [
+        "......#.....",
+        ".....###....",
+        "....#####...",
+        "....#oww#...",
+        "....#####...",
+        "..o.#####.#.",
+        ".ooo#####.#.",
+        "..o.#####.#.",
+        "....#####...",
+        ".....###....",
+        "....##.##...",
+        "....#...#..."
+      ]]
+    },
+    mage: {
+      frames: [[
+        ".....#......",
+        "....###.....",
+        "...#####....",
+        "..#######...",
+        "....#oo#....",
+        "....#wo#...#",
+        "...#####...#",
+        "..#######..#",
+        "..#######..#",
+        "...##.##...#",
+        "...##.##...#",
+        "..###.###..#"
+      ], [
+        ".....#......",
+        "....###.....",
+        "...#####....",
+        "..#######...",
+        "....#oo#....",
+        "....#wo#...#",
+        "...#####...#",
+        "..#######..#",
+        "..#######..#",
+        "....###....#",
+        "...##.##...#",
+        "..##...##..#"
+      ]]
+    },
+    slime: {
+      frames: [[
+        "....####....",
+        "..########..",
+        ".##########.",
+        ".##w####w##.",
+        ".##########.",
+        "############"
+      ], [
+        "............",
+        "...######...",
+        ".##########.",
+        "##w######w##",
+        "############",
+        "############"
+      ]]
+    },
+    goblin: {
+      frames: [[
+        "#..#####..#.",
+        ".#.#oww#.#..",
+        "..#######...",
+        "...#####..o.",
+        "..#######.o.",
+        "..#######.oo",
+        "...#####....",
+        "...##.##....",
+        "..###.###..."
+      ], [
+        "#..#####..#.",
+        ".#.#oww#.#..",
+        "..#######...",
+        "...#####..o.",
+        "..#######.o.",
+        "..#######.oo",
+        "...#####....",
+        "....###.....",
+        "...##.##...."
+      ]]
+    }
+  };
+
+  // dir: 1 = 右へ / -1 = 左へ, speed: 1秒あたりの px, gap: 間隔(列の中のずれ)
+  var WALKERS = [
+    { s: "knight", dir: 1,  speed: 34, off: 0,   beat: 240 },
+    { s: "mage",   dir: 1,  speed: 34, off: -86, beat: 260 },
+    { s: "knight", dir: 1,  speed: 34, off: -172, beat: 250 },
+    { s: "slime",  dir: -1, speed: 22, off: 140, beat: 420 },
+    { s: "goblin", dir: -1, speed: 28, off: 520, beat: 230 },
+    { s: "slime",  dir: -1, speed: 24, off: 900, beat: 380 }
+  ];
+
+  var SPRITE_COL = { "#": "rgb(" + CONFIG.line + ")", "o": "rgba(" + CONFIG.line + ", 0.5)", "w": "rgb(242, 240, 235)" };
+
+  function lineY(x, t) {
+    var f = Math.max(0, Math.min(N - 1.001, (x / w) * (N - 1)));
+    var i = Math.floor(f), k = f - i;
+    var a = pointAt(i, t, false).y, b = pointAt(i + 1, t, false).y;
+    return a + (b - a) * k;
+  }
+
+  function drawWalkers(t) {
+    var px = w < 720 ? 3 : 4;               // ドット1つの大きさ
+    var span = w + 300;                      // 画面外から入って画面外へ出る
+    ctx.globalAlpha = 0.95;
+    for (var k = 0; k < WALKERS.length; k++) {
+      var c = WALKERS[k], sp = SPRITES[c.s];
+      var run = reduceMotion ? 0 : t * 0.001 * c.speed;
+      var u = ((run + c.off) % span + span) % span - 150;
+      var x = c.dir > 0 ? u : w - u;
+      var y = lineY(x, t);
+      var slope = Math.atan2(lineY(x + 8, t) - lineY(x - 8, t), 16);
+      slope = Math.max(-0.3, Math.min(0.3, slope * 0.6));
+      var frame = sp.frames[reduceMotion ? 0 : (Math.floor(t / c.beat) + k) % 2];
+      var hop = reduceMotion ? 0 : Math.abs(Math.sin(t / c.beat * Math.PI)) * 2.5;
+      var rows = frame.length, cols = frame[0].length;
+      ctx.save();
+      ctx.translate(x, y - hop + 1);
+      ctx.rotate(slope);
+      if (c.dir < 0) ctx.scale(-1, 1);
+      for (var r = 0; r < rows; r++) {
+        var line = frame[r];
+        for (var q = 0; q < line.length; q++) {
+          var ch = line.charAt(q);
+          if (ch === ".") continue;
+          ctx.fillStyle = SPRITE_COL[ch];
+          ctx.fillRect(Math.round((q - cols / 2) * px), Math.round((r - rows) * px), px + 0.6, px + 0.6);
+        }
+      }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
   function draw(t) {
-    pulseT = t;
-    if (!reduceMotion) updatePulses(t);
     ctx.clearRect(0, 0, w, h);
     ctx.globalAlpha = CONFIG.opacity;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
 
     ctx.strokeStyle = "rgba(242, 240, 235, 0.08)";
     ctx.lineWidth = 1;
@@ -101,46 +225,16 @@
     ctx.moveTo(0, base); ctx.lineTo(w, base);
     ctx.stroke();
 
-    // 再生ヘッドが左から右へゆっくり走り、通った所のバーが明るくなる
-    var sp = CONFIG.speed;
-    var ph = reduceMotion ? -1 : ((t * sp / 9000) % 1.3) - 0.15;
+    ctx.strokeStyle = "rgba(" + CONFIG.line + ", 0.16)";
+    path(t, true);
 
-    // イコライザーのバー(波の大きさに合わせて上下に伸びる)
+    ctx.strokeStyle = "rgb(" + CONFIG.line + ")";
     ctx.lineWidth = 2;
-    for (var j = 0; j < BARS; j++) {
-      var u = j / (BARS - 1), fi = u * (N - 1);
-      var env = Math.abs(shape(fi, t) + pulseAt(u)) * 1.5;
-      var hh = (env * amp + 3 + 7 * (0.5 + 0.5 * Math.sin(j * 1.7 + t * sp * 0.004))) * taperAt(fi);
-      var a = 0.15 + 0.55 * Math.exp(-Math.pow((u - ph) / 0.045, 2));
-      ctx.strokeStyle = "rgba(" + CONFIG.line + ", " + a.toFixed(3) + ")";
-      ctx.beginPath();
-      ctx.moveTo(u * w, base - hh); ctx.lineTo(u * w, base + hh);
-      ctx.stroke();
-    }
-
-    // 奥の線 → 主線の順に重ねる(反転した細い線も1本)
-    for (var k = LAYERS.length - 1; k >= 0; k--) {
-      var L = LAYERS[k];
-      ctx.strokeStyle = "rgba(" + CONFIG.line + ", " + (L.alpha * (k === 0 ? 1 : 1)).toFixed(3) + ")";
-      ctx.lineWidth = L.width;
-      path(t, L, false);
-      if (k === 0) { ctx.strokeStyle = "rgba(" + CONFIG.line + ", 0.16)"; ctx.lineWidth = 1; path(t, L, true); }
-    }
-
-    // 再生ヘッド(細い縦線 + 主線との交点の光)
-    if (ph >= 0 && ph <= 1) {
-      var px = ph * w, pi = ph * (N - 1);
-      var py = base - valueAt(pi, t, LAYERS[0]) * amp;
-      ctx.strokeStyle = "rgba(" + CONFIG.line + ", 0.22)";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(px, base - amp * 1.5); ctx.lineTo(px, base + amp * 1.5); ctx.stroke();
-      ctx.fillStyle = "rgba(" + CONFIG.line + ", 0.25)";
-      ctx.beginPath(); ctx.arc(px, py, 9, 0, 6.2832); ctx.fill();
-      ctx.fillStyle = "rgb(" + CONFIG.line + ")";
-      ctx.beginPath(); ctx.arc(px, py, 3.2, 0, 6.2832); ctx.fill();
-    }
+    ctx.lineJoin = "round";
+    path(t, false);
 
     ctx.globalAlpha = 1;
+    drawWalkers(t);
   }
 
   // ヒーローが下のセクションに完全に隠れたら描画を止めて省電力
