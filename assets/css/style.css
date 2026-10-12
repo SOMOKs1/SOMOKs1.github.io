@@ -306,12 +306,8 @@ html.modal-open { overflow: hidden; }
 /* ---------- ページ送り(assets/js/pages.js) ---------- */
 /* マウス・トラックパッド・キーボードでは、少しスクロールするだけで次(前)のページまで自動で滑って切り替わる(assets/js/pages.js)。
    画面より長いページ(作品)は、その中を自由にスクロールでき、端まで来ると次のページへ切り替わる。
-   タッチ操作の端末では、ブラウザ標準の吸着(近くのページにぴたっと止まる)を使う */
-@media (pointer: coarse) {
-  html { scroll-snap-type: y proximity; }
-  main > section { scroll-snap-align: start; }
-}
-.site-footer { scroll-snap-align: end; }
+   タッチ操作の端末(スマホ・タブレット)では吸着をやめて、指の動きどおりに普通にスクロールする
+   (長いページで吸着すると、少しスワイプしても元の位置に引き戻されてしまうため) */
 
 /* 右端のページ点(広い画面のみ) */
 .pager { position: fixed; z-index: 9; right: 20px; top: 50%; transform: translateY(-50%); display: none; flex-direction: column; align-items: flex-end; gap: 16px; }
