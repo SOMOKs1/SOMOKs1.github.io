@@ -16,8 +16,8 @@
   /* ---------- 言語切り替え(英語ページは <html lang="en">) ---------- */
   var IS_EN = (document.documentElement.lang || "").toLowerCase().indexOf("en") === 0;
   var T = IS_EN
-    ? { noVideo: "Video coming soon", close: "Close", role: "Role", tools: "Tools", more: "View details ›", empty: "Works are coming soon.", all: "All" }
-    : { noVideo: "動画準備中", close: "閉じる", role: "担当", tools: "使用ツール", more: "詳細を見る ›", empty: "作品は準備中です。", all: "すべて" };
+    ? { noVideo: "Video coming soon", close: "Close", role: "Role", tools: "Tools", notes: "Production notes", more: "View details ›", empty: "Works are coming soon.", all: "All" }
+    : { noVideo: "動画準備中", close: "閉じる", role: "担当", tools: "使用ツール", notes: "制作メモ", more: "詳細を見る ›", empty: "作品は準備中です。", all: "すべて" };
 
   // データ側の en: { ... } に書いた項目で、英語ページだけ上書きする
   function localize(item) {
@@ -248,6 +248,31 @@
     if (work.role) addFact(T.role, document.createTextNode(work.role));
     if (work.tools && work.tools.length) addFact(T.tools, tagList(work.tools));
     if (facts.childNodes.length) body.appendChild(facts);
+
+    // 制作メモ: 見出し + 文章 + 作業画面などの画像(任意)を、いくつか並べる
+    var notes = (work.notes || []).filter(function (n) { return n && (n.text || n.image || n.image === ""); });
+    if (notes.length) {
+      var sec = el("section", "modal-notes");
+      sec.appendChild(el("h3", "modal-notes-title", T.notes));
+      notes.forEach(function (n) {
+        var block = el("div", "note");
+        if (n.heading) block.appendChild(el("h4", "note-heading", n.heading));
+        if (n.text) block.appendChild(el("p", "note-text", n.text));
+        if (n.image) {
+          var fig = el("figure", "note-figure");
+          var img = document.createElement("img");
+          img.src = n.image; img.alt = n.caption || n.heading || ""; img.loading = "lazy";
+          fig.appendChild(img);
+          if (n.caption) fig.appendChild(el("figcaption", "", n.caption));
+          block.appendChild(fig);
+        } else if (n.image === "" && window.SHOW_DRAFTS) {
+          // image: "" のときは、確認用の空き枠(SHOW_DRAFTS が true の間だけ表示)
+          block.appendChild(el("div", "note-figure note-placeholder", n.caption || "作業画面の画像をここに入れます"));
+        }
+        sec.appendChild(block);
+      });
+      body.appendChild(sec);
+    }
 
     var links = visibleLinks(work);
     if (links.length) {

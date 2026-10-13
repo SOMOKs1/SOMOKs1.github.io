@@ -495,3 +495,15 @@ html.modal-open { overflow: hidden; }
 .facts dt .ic { font-size: 0.95rem; }
 .tool-list .ic { font-size: 0.98rem; }
 .award-mini .award-title .ic { margin-right: 7px; font-size: 0.95em; }
+
+
+/* ---------- 詳細ポップアップの「制作メモ」 ---------- */
+.modal-notes { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
+.modal-notes-title { font-family: var(--font-display); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+.note + .note { margin-top: 20px; }
+.note-heading { font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
+.note-text { margin-top: 6px; color: var(--body); font-size: 0.92rem; line-height: 1.85; }
+.note-figure { margin: 12px 0 0; }
+.note-figure img { display: block; width: 100%; height: auto; border-radius: 10px; background: #050505; }
+.note-figure figcaption { margin-top: 6px; color: var(--muted); font-size: 0.76rem; }
+.note-placeholder { display: grid; place-items: center; aspect-ratio: 16 / 9; border: 1px dashed rgba(236, 208, 111, 0.4); border-radius: 10px; color: var(--muted); font-size: 0.8rem; text-align: center; padding: 12px; }

@@ -19,6 +19,8 @@
  * SHOW_DRAFTS : 下の window.SHOW_DRAFTS を true にすると draft の空き枠も表示されます(デザイン確認用)。公開前に false に戻してください。
  * more  : true を書いた作品は、トップの Works には出ず、「全作品を見る」ページ(works/)だけに表示されます。
  *          書かない作品は、トップにも全作品ページにも表示されます。
+ * notes : 詳細ポップアップの「制作メモ」。[{ heading: "見出し", text: "文章", image: "assets/img/xxx.png", caption: "画像の説明" }, ...] と並べます。
+ *          image と caption は省略できます。image: "" と書くと、SHOW_DRAFTS が true の間だけ画像の空き枠が表示されます。
  * badge : 受賞・入賞などの小さな印(例: "優秀賞" "Finalist")。書いた作品にだけ表示されます。英語ページは en: { badge: "..." } で上書き。
  */
 window.SHOW_DRAFTS = true; // ← デザイン確認中は true。人に見せる前に false にすると空き枠が隠れます
@@ -37,9 +39,19 @@ window.WORKS = [
     year: "2026",
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。自分で収録したFoleyも使用。制作期間約40時間。",
     media: { type: "youtube", id: "CBrUTeC69t4" },
+    notes: [
+      { heading: "音の設計", text: "【サンプル】シーンごとに、どんな音を重ねたかをここに書きます。例:衝撃音は低域のインパクトに金属のFoleyを重ねて、質感を出した。" },
+      { heading: "Foley収録", text: "【サンプル】自分で録った音と、その使いどころをここに書きます。", image: "", caption: "Logic Pro のセッション画面" },
+      { heading: "工夫した点", text: "【サンプル】苦労したところ、こだわったところを1〜2行で書きます。" }
+    ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
       title: "Game Sound Redesign",
+      notes: [
+        { heading: "Sound design", text: "[Sample] Describe what you layered for each scene. e.g. Layered a low-end impact with metal Foley to add texture to the hits." },
+        { heading: "Foley recording", text: "[Sample] Describe the sounds you recorded yourself and where you used them.", image: "", caption: "Logic Pro session" },
+        { heading: "What I focused on", text: "[Sample] One or two lines on what was hard or what you cared about most." }
+      ],
       badge: "Excellence Award",
       category: "Game footage sound redesign",
       description: "Tools: Logic Pro. Libraries: Soundly, Splice. Also used Foley I recorded myself. Production time: approx. 40 hours.",
