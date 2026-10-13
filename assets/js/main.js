@@ -166,9 +166,14 @@
     var media = el("div", "modal-media");
     var body = el("div", "modal-body");
 
+    var main = el("div", "modal-main");
+    var aside = el("aside", "modal-aside");
+    aside.hidden = true;
+    main.appendChild(media);
+    main.appendChild(body);
     panel.appendChild(close);
-    panel.appendChild(media);
-    panel.appendChild(body);
+    panel.appendChild(main);
+    panel.appendChild(aside);
     dialog.appendChild(panel);
     document.body.appendChild(dialog);
 
@@ -180,7 +185,7 @@
     // Esc キーで閉じたときも後片付けをする
     dialog.addEventListener("close", cleanupModal);
 
-    return { dialog: dialog, panel: panel, media: media, body: body };
+    return { dialog: dialog, panel: panel, media: media, body: body, aside: aside };
   }
 
   function fillModalMedia(work) {
@@ -224,6 +229,9 @@
   function fillModalBody(work) {
     var body = modal.body;
     body.textContent = "";
+    modal.aside.textContent = "";
+    modal.aside.hidden = true;
+    modal.panel.classList.remove("has-notes");
 
     var metaEl = metaNode(work);
     if (metaEl) body.appendChild(metaEl);
@@ -252,7 +260,7 @@
     // 制作メモ: 見出し + 文章 + 作業画面などの画像(任意)を、いくつか並べる
     var notes = (work.notes || []).filter(function (n) { return n && (n.text || n.image || n.image === ""); });
     if (notes.length) {
-      var sec = el("section", "modal-notes");
+      var sec = modal.aside;
       sec.appendChild(el("h3", "modal-notes-title", T.notes));
       notes.forEach(function (n) {
         var block = el("div", "note");
@@ -271,7 +279,8 @@
         }
         sec.appendChild(block);
       });
-      body.appendChild(sec);
+      sec.hidden = false;
+      modal.panel.classList.add("has-notes");
     }
 
     var links = visibleLinks(work);

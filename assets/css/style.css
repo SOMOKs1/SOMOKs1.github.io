@@ -266,6 +266,7 @@ html.modal-open { overflow: hidden; }
 @media (max-width: 720px) {
   .modal { width: 100vw; max-width: 100vw; max-height: 94vh; margin: auto 0 0; border-radius: 14px 14px 0 0; }
   .modal-body { padding: 18px 18px 26px; }
+  .modal-aside { padding: 20px 18px 28px; }
   .modal-facts > div { grid-template-columns: 1fr; gap: 2px; }
 }
 @media (prefers-reduced-motion: reduce) { .modal[open] { animation: none; } }
@@ -498,7 +499,15 @@ html.modal-open { overflow: hidden; }
 
 
 /* ---------- 詳細ポップアップの「制作メモ」 ---------- */
-.modal-notes { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
+.modal-aside { padding: 22px 28px 30px; border-top: 1px solid var(--line); }
+.modal-aside[hidden] { display: none; }
+/* PC: 左に映像と情報、右に制作メモ。それぞれ別々にスクロールできる */
+@media (min-width: 900px) {
+  .modal:has(.has-notes) { width: min(1240px, 96vw); height: min(86vh, 760px); overflow: hidden; }
+  .modal-panel.has-notes { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); height: 100%; }
+  .modal-panel.has-notes .modal-main { overflow-y: auto; min-height: 0; }
+  .modal-panel.has-notes .modal-aside { overflow-y: auto; min-height: 0; border-top: 0; border-left: 1px solid var(--line); padding: 56px 28px 30px; background: rgba(255, 255, 255, 0.02); }
+}
 .modal-notes-title { font-family: var(--font-display); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
 .note + .note { margin-top: 20px; }
 .note-heading { font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
