@@ -63,8 +63,16 @@ window.WORKS = [
     year: "2026",
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。自分で収録したFoleyも使用。制作期間1か月。",
     media: { type: "youtube", id: "zdIdv4i0clI" },
+    notes: [
+      { heading: "こだわり", text: "【サンプル】特にこだわった点をここに書きます。" },
+      { heading: "改善したい点", text: "【サンプル】次に直したい点、まだ足りないと感じる点をここに書きます。" }
+    ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
+      notes: [
+        { heading: "What I focused on", text: "[Sample] Describe what you cared about most." },
+        { heading: "What I'd improve", text: "[Sample] Describe what you would fix next, or what still feels lacking." }
+      ],
       category: "Film sound redesign (Berlin International Sound Design Competition)",
       description: "Tools: Logic Pro. Libraries: Soundly, Splice. Also used Foley I recorded myself. Production time: 1 month.",
       order: 1, // 英語ページでは先頭に表示
@@ -79,8 +87,16 @@ window.WORKS = [
     year: "2026",
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。制作期間1週間。",
     media: { type: "youtube", id: "-uvS4SlQrh0" },
+    notes: [
+      { heading: "こだわり", text: "【サンプル】特にこだわった点をここに書きます。" },
+      { heading: "改善したい点", text: "【サンプル】次に直したい点、まだ足りないと感じる点をここに書きます。" }
+    ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
+      notes: [
+        { heading: "What I focused on", text: "[Sample] Describe what you cared about most." },
+        { heading: "What I'd improve", text: "[Sample] Describe what you would fix next, or what still feels lacking." }
+      ],
       category: "Game footage sound redesign (Black Desert)",
       description: "Tools: Logic Pro. Libraries: Soundly, Splice. Production time: 1 week.",
       links: [{ label: "Production notes (PDF)", url: "" }]
@@ -95,8 +111,16 @@ window.WORKS = [
     year: "2026",
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。制作期間○○。",
     media: { type: "youtube", id: "" },
+    notes: [
+      { heading: "こだわり", text: "【サンプル】特にこだわった点をここに書きます。" },
+      { heading: "改善したい点", text: "【サンプル】次に直したい点、まだ足りないと感じる点をここに書きます。" }
+    ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
+      notes: [
+        { heading: "What I focused on", text: "[Sample] Describe what you cared about most." },
+        { heading: "What I'd improve", text: "[Sample] Describe what you would fix next, or what still feels lacking." }
+      ],
       category: "Game sound redesign",
       description: "Tools: Logic Pro. Libraries: Soundly, Splice. Production time: ...",
       links: [{ label: "Production notes (PDF)", url: "" }]
@@ -111,8 +135,16 @@ window.WORKS = [
     year: "2026",
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。制作期間○○。",
     media: { type: "youtube", id: "" },
+    notes: [
+      { heading: "こだわり", text: "【サンプル】特にこだわった点をここに書きます。" },
+      { heading: "改善したい点", text: "【サンプル】次に直したい点、まだ足りないと感じる点をここに書きます。" }
+    ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
+      notes: [
+        { heading: "What I focused on", text: "[Sample] Describe what you cared about most." },
+        { heading: "What I'd improve", text: "[Sample] Describe what you would fix next, or what still feels lacking." }
+      ],
       category: "Game sound redesign",
       description: "Tools: Logic Pro. Libraries: Soundly, Splice. Production time: ...",
       links: [{ label: "Production notes (PDF)", url: "" }]
@@ -127,8 +159,16 @@ window.WORKS = [
     description: "一人称視点のナラティブホラー。担当:効果音(SFX)。クレジット名:SoMok0617。",
     media: { type: "none" },
     thumb: "https://img.itch.zone/aW1nLzI5NjExNjgwLnBuZw==/508x254%23mb/UWWhdy.png",
+    notes: [
+      { heading: "担当範囲", text: "【サンプル】担当した音(効果音・環境音など)の範囲をここに書きます。" },
+      { heading: "制作過程", text: "【サンプル】作り方の流れ(収録・加工・実装など)をここに書きます。" }
+    ],
     links: [{ label: "itch.io でプレイ", url: "https://luvbytes404.itch.io/borrowed-skin-moonmoss" }],
     en: {
+      notes: [
+        { heading: "Scope of work", text: "[Sample] Describe which sounds you handled (SFX, ambience, etc.)." },
+        { heading: "Process", text: "[Sample] Describe your workflow (recording, editing, implementation, etc.)." }
+      ],
       category: "Game jam entry (Brackeys Game Jam 2026.2)",
       description: "A first-person narrative horror game. Role: sound effects (SFX). Credited as SoMok0617.",
       links: [{ label: "Play on itch.io", url: "https://luvbytes404.itch.io/borrowed-skin-moonmoss" }]
