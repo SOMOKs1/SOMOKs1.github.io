@@ -40,17 +40,15 @@ window.WORKS = [
     description: "使用ツール:Logic Pro。ライブラリ:Soundly、Splice。自分で収録したFoleyも使用。制作期間約40時間。",
     media: { type: "youtube", id: "CBrUTeC69t4" },
     notes: [
-      { heading: "音の設計", text: "【サンプル】シーンごとに、どんな音を重ねたかをここに書きます。例:衝撃音は低域のインパクトに金属のFoleyを重ねて、質感を出した。" },
-      { heading: "Foley収録", text: "【サンプル】自分で録った音と、その使いどころをここに書きます。", image: "", caption: "Logic Pro のセッション画面" },
-      { heading: "工夫した点", text: "【サンプル】苦労したところ、こだわったところを1〜2行で書きます。" }
+      { heading: "こだわり", text: "【サンプル】特にこだわった点をここに書きます。例:衝撃音は低域のインパクトに金属のFoleyを重ねて、質感を出した。" },
+      { heading: "改善したい点", text: "【サンプル】次に直したい点、まだ足りないと感じる点をここに書きます。" }
     ],
     links: [{ label: "制作解説書 (PDF)", url: "" }],
     en: {
       title: "Game Sound Redesign",
       notes: [
-        { heading: "Sound design", text: "[Sample] Describe what you layered for each scene. e.g. Layered a low-end impact with metal Foley to add texture to the hits." },
-        { heading: "Foley recording", text: "[Sample] Describe the sounds you recorded yourself and where you used them.", image: "", caption: "Logic Pro session" },
-        { heading: "What I focused on", text: "[Sample] One or two lines on what was hard or what you cared about most." }
+        { heading: "What I focused on", text: "[Sample] Describe what you cared about most. e.g. Layered a low-end impact with metal Foley to add texture to the hits." },
+        { heading: "What I'd improve", text: "[Sample] Describe what you would fix next, or what still feels lacking." }
       ],
       badge: "Excellence Award",
       category: "Game footage sound redesign",
