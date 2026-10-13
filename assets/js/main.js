@@ -28,6 +28,14 @@
     return out;
   }
 
+  // 一覧(カード・ショーケース)には、受賞の印だけを出す。年・種類・説明・使用ツールは詳細ポップアップに入っている
+  function badgeNode(work) {
+    if (!work.badge) return null;
+    var p = el("p", "card-meta");
+    p.appendChild(el("span", "badge", work.badge));
+    return p;
+  }
+
   function metaNode(work) {
     if (!work.category && !work.year && !work.badge) return null;
     var p = el("p", "card-meta");
@@ -225,7 +233,7 @@
     card.appendChild(frame);
 
     var body = el("div", "card-body");
-    var cardMeta = metaNode(work);
+    var cardMeta = badgeNode(work);
     if (cardMeta) body.appendChild(cardMeta);
 
     var h = el("h3", "card-title");
@@ -235,7 +243,6 @@
     h.appendChild(titleBtn);
     body.appendChild(h);
 
-    if (work.description) body.appendChild(el("p", "card-desc", work.description));
 
     var more = el("button", "more", T.more);
     more.type = "button";
@@ -263,7 +270,6 @@
     tb.addEventListener("click", open);
     h.appendChild(tb);
     body.appendChild(h);
-    if (work.year) body.appendChild(el("p", "mini-meta", work.year));
     card.appendChild(body);
     return card;
   }
@@ -285,7 +291,7 @@
       slide.appendChild(buildThumb(w, open));
 
       var cap = el("div", "caption");
-      var m = metaNode(w);
+      var m = badgeNode(w);
       if (m) cap.appendChild(m);
       var h = el("h3", "card-title");
       var tb = el("button", "title-btn", w.title || "Untitled");
@@ -293,7 +299,6 @@
       tb.addEventListener("click", open);
       h.appendChild(tb);
       cap.appendChild(h);
-      if (w.description) cap.appendChild(el("p", "card-desc", w.description));
       slide.appendChild(cap);
       stage.appendChild(slide);
       slides.push(slide);

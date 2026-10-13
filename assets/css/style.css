@@ -374,7 +374,7 @@ html.modal-open { overflow: hidden; }
 .showcase .slide .media { height: 100%; aspect-ratio: auto; }
 .showcase .caption {
   position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; pointer-events: none;
-  padding: 72px clamp(18px, 3vw, 34px) clamp(18px, 2.6vw, 30px);
+  padding: 56px clamp(18px, 3vw, 34px) clamp(18px, 2.6vw, 30px);
   background: linear-gradient(to top, rgba(5, 5, 5, 0.9), rgba(5, 5, 5, 0.6) 55%, transparent);
 }
 .showcase .caption .title-btn, .showcase .caption a { pointer-events: auto; }
