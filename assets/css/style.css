@@ -114,10 +114,10 @@ main, .site-footer { position: relative; z-index: 1; }
 
 .facts { border-top: 1px solid var(--line); }
 .facts div { padding: 14px 0; border-bottom: 1px solid var(--line); }
-.facts dt { color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; }
+.facts dt { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; }
 .facts dd { margin-top: 2px; font-size: 0.95rem; }
 .tool-list { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 2px; }
-.tool-list li { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; }
+.tool-list li { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; }
 
 /* ---------- 経歴(About) ---------- */
 .timeline { list-style: none; margin-top: 28px; padding-left: 0; }
@@ -486,3 +486,12 @@ html.modal-open { overflow: hidden; }
   .grid.is-archive { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
   .mini-title { font-size: 0.88rem; }
 }
+
+
+/* ---------- 小さなアイコン ---------- */
+.ic { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1.05em; height: 1.05em; color: var(--accent); vertical-align: -0.14em; }
+.ic svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ic img { width: 100%; height: 100%; object-fit: contain; border-radius: 3px; }
+.facts dt .ic { font-size: 0.95rem; }
+.tool-list .ic { font-size: 0.98rem; }
+.award-mini .award-title .ic { margin-right: 7px; font-size: 0.95em; }

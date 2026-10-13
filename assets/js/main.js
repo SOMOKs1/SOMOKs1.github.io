@@ -83,6 +83,59 @@
     return box;
   }
 
+  /* ---------- 小さなアイコン(汎用の線画。画像に差し替えたいときは data/site.js を参照) ---------- */
+  var ICON_PATHS = {
+    school: "M2 9l10-5 10 5-10 5-10-5z M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5 M22 9v6",
+    calendar: "M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4",
+    goal: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z M12 12h.01",
+    tools: "M4 7h9 M17 7h3 M4 17h3 M11 17h9 M15 7a2 2 0 1 0 0 .01 M9 17a2 2 0 1 0 0 .01",
+    trophy: "M8 21h8 M12 17v4 M7 4h10v5a5 5 0 0 1-10 0z M17 5h3v2a3 3 0 0 1-3 3 M7 5H4v2a3 3 0 0 0 3 3",
+    award: "M8 21h8 M12 17v4 M7 4h10v5a5 5 0 0 1-10 0z M17 5h3v2a3 3 0 0 1-3 3 M7 5H4v2a3 3 0 0 0 3 3",
+    medal: "M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M8.5 14 7 21l5-3 5 3-1.5-7",
+    star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
+    wave: "M3 12h2 M8 7v10 M12 4v16 M16 8v8 M20 10v4",
+    keys: "M3 5h18v14H3z M9 5v14 M15 5v14",
+    faders: "M6 3v18 M12 3v18 M18 3v18 M4 14h4 M10 8h4 M16 16h4",
+    nodes: "M6 8a2 2 0 1 0 0-.01 M18 7a2 2 0 1 0 0-.01 M12 18a2 2 0 1 0 0-.01 M7.6 9.2 10.8 16 M16.7 8.8 13.3 16.2 M8 6.6 16 6.8",
+    cube: "M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5 M12 12v9 M12 12 4 7.5",
+    dot: "M12 12h.01"
+  };
+  var TOOL_ICON = { reaper: "wave", "logic": "keys", "pro tools": "faders", protools: "faders", wwise: "nodes", fmod: "nodes", unity: "cube", unreal: "cube" };
+
+  // name が ICON_PATHS のキーなら線画、画像のパス(/ か . を含む)なら <img>
+  function iconNode(nameOrPath) {
+    var span = el("span", "ic");
+    span.setAttribute("aria-hidden", "true");
+    if (!nameOrPath) return null;
+    if (/[\/.]/.test(nameOrPath)) {
+      var img = document.createElement("img");
+      img.src = nameOrPath; img.alt = ""; img.loading = "lazy";
+      span.appendChild(img);
+      return span;
+    }
+    var d = ICON_PATHS[nameOrPath];
+    if (!d) return null;
+    span.innerHTML = '<svg viewBox="0 0 24 24" focusable="false"><path d="' + d + '"/></svg>';
+    return span;
+  }
+
+  function toolIconName(name) {
+    var k = String(name).toLowerCase();
+    for (var key in TOOL_ICON) if (k.indexOf(key) !== -1) return TOOL_ICON[key];
+    return "wave";
+  }
+
+  // About の項目名(所属・志望など)の左に小さなアイコンを付ける
+  function renderFactIcons() {
+    var site = window.SITE || {};
+    var custom = site.icons || {};
+    [].slice.call(document.querySelectorAll(".facts dt[data-icon]")).forEach(function (dt) {
+      var key = dt.getAttribute("data-icon");
+      var node = iconNode(custom[key] || key);
+      if (node) dt.insertBefore(node, dt.firstChild);
+    });
+  }
+
   /* ---------- 詳細ポップアップ(モーダル) ---------- */
   var modal = null;
 
@@ -452,7 +505,15 @@
     var row = document.getElementById("tools-row");
     var list = document.getElementById("tool-list");
     if (!row || !list || !site.tools || !site.tools.length) return;
-    site.tools.forEach(function (name) { list.appendChild(el("li", "", name)); });
+    site.tools.forEach(function (t) {
+      var name = typeof t === "string" ? t : (t && t.name);
+      if (!name) return;
+      var li = el("li");
+      var ic = iconNode((t && t.icon) || toolIconName(name));
+      if (ic) li.appendChild(ic);
+      li.appendChild(document.createTextNode(name));
+      list.appendChild(li);
+    });
     row.hidden = false;
   }
 
@@ -468,6 +529,8 @@
     items.forEach(function (a) {
       var li = el("li", "award");
       var t = el("span", "award-title");
+      var aic = iconNode(a.icon || "trophy");
+      if (aic) t.appendChild(aic);
       t.appendChild(document.createTextNode(a.title));
       if (a.url) {
         // 文字にリンクを張る代わりに、小さな「外部リンク」アイコンを添える
@@ -490,6 +553,7 @@
     renderContact();
     renderTools();
     renderAwards();
+    renderFactIcons();
     var year = document.getElementById("year");
     if (year) year.textContent = new Date().getFullYear();
   }
