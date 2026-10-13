@@ -90,6 +90,7 @@
     goal: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z M12 12h.01",
     tools: "M4 7h9 M17 7h3 M4 17h3 M11 17h9 M15 7a2 2 0 1 0 0 .01 M9 17a2 2 0 1 0 0 .01",
     trophy: "M8 21h8 M12 17v4 M7 4h10v5a5 5 0 0 1-10 0z M17 5h3v2a3 3 0 0 1-3 3 M7 5H4v2a3 3 0 0 0 3 3",
+    cert: "M6 3h9l4 4v14H6z M15 3v4h4 M9 14l2 2 4-4",
     award: "M8 21h8 M12 17v4 M7 4h10v5a5 5 0 0 1-10 0z M17 5h3v2a3 3 0 0 1-3 3 M7 5H4v2a3 3 0 0 0 3 3",
     medal: "M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z M8.5 14 7 21l5-3 5 3-1.5-7",
     star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
@@ -582,11 +583,32 @@
     row.hidden = false;
   }
 
+  /* ---------- 資格(About) ---------- */
+  function renderCerts() {
+    var site = window.SITE || {};
+    var list = document.getElementById("cert-list");
+    var row = document.getElementById("certs-row");
+    if (!list || !row) return;
+    var items = (site.certs || []).filter(function (c) { return c && c.title; });
+    if (!items.length) { row.hidden = true; return; }
+    items.forEach(function (c) {
+      var li = el("li", "award");
+      var t = el("span", "award-title");
+      var ic = iconNode(c.icon || "cert");
+      if (ic) t.appendChild(ic);
+      t.appendChild(document.createTextNode(IS_EN && c.en ? c.en : c.title));
+      li.appendChild(t);
+      list.appendChild(li);
+    });
+    row.hidden = false;
+  }
+
   function init() {
     renderWorks();
     renderContact();
     renderTools();
     renderAwards();
+    renderCerts();
     renderFactIcons();
     var year = document.getElementById("year");
     if (year) year.textContent = new Date().getFullYear();

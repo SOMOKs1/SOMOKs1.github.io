@@ -2,6 +2,7 @@
  * サイト共通の設定(連絡先など)
  * url が空("")のリンクは表示されません。作成したら URL を入れるだけで表示されます。
  * tools : About の「使用ツール」に並ぶ名前です。増減は自由です。空 [] なら行ごと非表示になります。
+ * certs : 「資格」に並ぶ項目です。title = 日本語 / en = 英語ページ用(省略可)。空 [] なら行ごと非表示になります。
  * awards: 「受賞歴」に並ぶ項目です。上から順に表示されます。空 [] ならセクションごと非表示になります。
  *         title = 賞の名前 / detail = 作品名や補足(なくてもOK) / year = 年(書いたときだけ表示) / url = 公式ページ(書いたときだけリンク)
  */
@@ -23,6 +24,10 @@ window.SITE = {
     { title: "バンダイナムコスタジオ サウンドMAチャレンジコンテスト 入賞", detail: "テイルズ オブ アライズ カットシーンの効果音制作・MA", icon: "trophy" },
     { title: "Berlin International Sound Design Competition 2026 (BIFSC) ファイナリスト", detail: "", icon: "medal", url: "https://www.bifsc.org/sound-design-competition" },
     { title: "学内コンテスト 入賞", detail: "", icon: "star" }
+  ],
+  certs: [
+    { title: "日本語能力試験 (JLPT) N2", en: "JLPT N2 (Japanese-Language Proficiency Test)" },
+    { title: "映像音響処理技術者認定試験 (JPPA)", en: "Video & Audio Processing Engineer Certification (JPPA)" }
   ],
   links: [
     { label: "YouTube", url: "" },
