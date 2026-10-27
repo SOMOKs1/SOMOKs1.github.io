@@ -159,16 +159,8 @@ window.WORKS = [
     description: "一人称視点のナラティブホラー。担当:効果音(SFX)。クレジット名:SoMok0617。",
     media: { type: "none" },
     thumb: "https://img.itch.zone/aW1nLzI5NjExNjgwLnBuZw==/508x254%23mb/UWWhdy.png",
-    notes: [
-      { heading: "担当範囲", text: "【サンプル】担当した音(効果音・環境音など)の範囲をここに書きます。" },
-      { heading: "制作過程", text: "【サンプル】作り方の流れ(収録・加工・実装など)をここに書きます。" }
-    ],
     links: [{ label: "itch.io でプレイ", url: "https://luvbytes404.itch.io/borrowed-skin-moonmoss" }],
     en: {
-      notes: [
-        { heading: "Scope of work", text: "[Sample] Describe which sounds you handled (SFX, ambience, etc.)." },
-        { heading: "Process", text: "[Sample] Describe your workflow (recording, editing, implementation, etc.)." }
-      ],
       category: "Game jam entry (Brackeys Game Jam 2026.2)",
       description: "A first-person narrative horror game. Role: sound effects (SFX). Credited as SoMok0617.",
       links: [{ label: "Play on itch.io", url: "https://luvbytes404.itch.io/borrowed-skin-moonmoss" }]
