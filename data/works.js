@@ -23,7 +23,7 @@
  *          image と caption は省略できます。image: "" と書くと、SHOW_DRAFTS が true の間だけ画像の空き枠が表示されます。
  * badge : 受賞・入賞などの小さな印(例: "優秀賞" "Finalist")。書いた作品にだけ表示されます。英語ページは en: { badge: "..." } で上書き。
  */
-window.SHOW_DRAFTS = true; // ← デザイン確認中は true。人に見せる前に false にすると空き枠が隠れます
+window.SHOW_DRAFTS = false; // ← false = 空き枠(draft)を隠す(公開用)。デザイン確認のときだけ true に
 
 /*
  * WORKS_LAYOUT : 作品の見せ方。"showcase" = 大きなサムネイルが順番に切り替わる / "grid" = 一覧(カード)表示
