@@ -501,6 +501,7 @@ html.modal-open { overflow: hidden; }
 /* ---------- 詳細ポップアップの「制作メモ」 ---------- */
 .modal-aside { padding: 22px 28px 30px; border-top: 1px solid var(--line); }
 .modal-aside[hidden] { display: none; }
+@media (max-width: 720px) { .modal-aside { padding: 20px 18px 28px; } }
 /* PC: 左に映像と情報、右に制作メモ。それぞれ別々にスクロールできる */
 @media (min-width: 900px) {
   .modal:has(.has-notes) { width: min(1240px, 96vw); height: min(86vh, 760px); overflow: hidden; }
@@ -510,6 +511,7 @@ html.modal-open { overflow: hidden; }
 }
 .modal-notes-title { font-family: var(--font-display); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
 .note + .note { margin-top: 20px; }
+.note-text + .note-text { margin-top: 8px; }
 .note-heading { font-size: 0.95rem; font-weight: 700; line-height: 1.5; }
 .note-text { margin-top: 6px; color: var(--body); font-size: 0.92rem; line-height: 1.85; }
 .note-figure { margin: 12px 0 0; }

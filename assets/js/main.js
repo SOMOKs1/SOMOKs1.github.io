@@ -266,7 +266,8 @@
       notes.forEach(function (n) {
         var block = el("div", "note");
         if (n.heading) block.appendChild(el("h4", "note-heading", n.heading));
-        if (n.text) block.appendChild(el("p", "note-text", n.text));
+        // 文章の中の改行(\n)で段落を分ける
+        if (n.text) String(n.text).split(/\n+/).forEach(function (t) { if (t.trim()) block.appendChild(el("p", "note-text", t)); });
         if (n.image) {
           var fig = el("figure", "note-figure");
           var img = document.createElement("img");
